@@ -1,10 +1,10 @@
 const express = require('express');
 const app = express();
 
-const port = process.env.PORT || 3000;
 
-app.use('/', require('./route'));
+const port = 3000;
 
-app.listen(port, () => {
-    console.log(`running on port: ${port}`);
-});
+app.use('/', require('./routes'));
+
+app.listen(process.env.port || port);
+console.log('Web Server is listening at port:' + (process.env.port || port));

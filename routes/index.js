@@ -1,7 +1,7 @@
-const routes = require('express').Router();
-const lesson1Controller = require('../controllers/lesson1');     
+const router = require("express").Router();
 
-routes.get('/', lesson1Controller.homeRoate);
-routes.get('/page1', lesson1Controller.page1Roate);
+router.get('/', (req, res) => {res.send('Hello World');});
 
-module.exports = routes;
+router.use('/users', require('./users'));
+
+module.exports = router;

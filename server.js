@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const { connectToMongoDB } = require('./data/database'); // Adjust the path accordingly
 
 const app = express();
-const userRoute = require('./routes/users');
+// const userRoute = require('./routes/users');
 app.use(bodyParser.json());
-app.use(userRoute);
+// app.use(userRoute);
 // Add other routes as needed
 
 
@@ -29,6 +29,8 @@ app.use((req, res, next)=> {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     next();
 });
+
+app.use('/', require('./routes'));
 
 
 

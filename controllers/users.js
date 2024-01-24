@@ -4,6 +4,7 @@ const ObjectId = require("mongodb").ObjectId;
 
 
 const getAll = async (req, res) => {
+  console.log("Get all route working")
     // #swagger.tags=['users']
   try {
     const { db } = await connectToMongoDB();
@@ -18,28 +19,32 @@ const getAll = async (req, res) => {
 };
 
 const getSingle = async (req, res) => {
-     // #swagger.tags=['users']
-    try {
-      const { db } = await connectToMongoDB();
-      const userId = new ObjectId(req.params.Id);
-      const user = await db.collection("users").findOne({ _id: userId });
-  
-      if (user) {
-        res.setHeader("Content-Type", "application/json");
-        res.status(200).json(user);
-      } else {
-        res.status(404).json("User not found");
-      }
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json("Internal Server Error");
+  // #swagger.tags=['users']
+  console.log("Get single route working");
+  try {
+    const { db } = await connectToMongoDB();
+    const userId = new ObjectId(req.params.id);
+    console.log("Searching for user with ID:", userId);
+    const user = await db.collection("users").findOne({ _id: userId });
+
+    if (user) {
+      res.setHeader("Content-Type", "application/json");
+      res.status(200).json(user);
+    } else {
+      console.log("User not found for ID:", userId);
+      res.status(404).json("User not found");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json("Internal Server Error");
+  }
+};
+
 
 
   const createUser = async (req, res) => {
      // #swagger.tags=['users']
-  const { firstName, lastName, email, favoriteColor, birthday } = req.body;
+  // const { firstName, lastName, email, favoriteColor, birthday } = req.body;
   try {
     const { db } = await connectToMongoDB();
     // const user = {
@@ -69,52 +74,54 @@ const getSingle = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-     // #swagger.tags=['users']
+  // #swagger.tags=['users']
+  console.log("Update route working");
   try {
     const { db } = await connectToMongoDB();
-    const userId = new ObjectId(req.params.Id);
-    const user = {
-      username: req.body.username,
-      email: req.body.email,
-      name: req.body.name,
-      ipaddress: req.body.ipaddress,
-    };
+    const userId = new ObjectId(req.params.id);
+    console.log("Updating user with ID:", userId);
+    const user = {...req.body};
+    console.log("New user data:", user);
     const response = await db
       .collection("users")
       .replaceOne({ _id: userId }, user);
 
     if (response.modifiedCount > 0) {
-      res.status(204).send();
+      return res.status(200).send(response);
     } else {
+      console.log("User not found for update or no changes made.");
       res
-        .status(500)
-        .json(response.error || "Some error occurred while updating the user.");
+        .status(404)
+        .json("User not found for update or no changes made.");
     }
+
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json("Internal Server Error");
+    res.status(500).json({ error: error.message });
   }
 };
 
+
 const deleteUser = async (req, res) => {
-     // #swagger.tags=['users']
+  // #swagger.tags=['users']
+  console.log("Delete route working");
   try {
     const { db } = await connectToMongoDB();
     const userId = new ObjectId(req.params.id);
-    const response = await db.collection("users").remove({ _id: userId }, true);
+    const response = await db.collection("users").deleteOne({ _id: userId });
 
     if (response.deletedCount > 0) {
-      res.status(200).send();
+      return res.status(200).send();
     } else {
-      res
-        .status(500)
-        .json(response.error || "Some error occurred while deleting the user.");
+      res.status(404).json("User not found for deletion");
     }
   } catch (error) {
     console.error("Error deleting user:", error);
-    res.status(500).json("Internal Server Error");
+    res.status(500).json({ error: error.message });
   }
 };
+
+
 
 module.exports = {
   getAll,

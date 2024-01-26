@@ -2,9 +2,9 @@
 
 //COURSES
 ### Render
-GET https://personalassignment6-t3uq.onrender.com/courses
+GET https://cse341project-eaxb.onrender.com/users
 ### Local Host
-GET http://localhost:3000/courses
+GET http://localhost:3000/users
 
 //INSTRUCTORS
 ### Render
